@@ -1,4 +1,6 @@
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session
+
+
 
 ENGINE = None
 Session = None
@@ -7,8 +9,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, TIMESTAMP, DATETIME, ForeignKey
 
+ENGINE = create_engine("sqlite:///ratings.db", echo=False)
+session = scoped_session(sessionmaker(bind=ENGINE,
+						autocommit = False,
+						autoflush = False)) 
 
 Base = declarative_base()
+Base.query = session.query_property()
 
 class User(Base):
 	__tablename__ = "users"
@@ -24,6 +31,10 @@ class User(Base):
 
 	def __repr__(self):
 		return"<User('%s', '%s', '%s', '%s', '%s')>" % (self.user_id, self.email, self.password, self.age, self.gender, self.occupation, self.zipcode)
+
+def create_user(email, password, age, gender, occupation, zipcode)
+	new_user = User(email = "email", password = "password", gender = "gender", occupation = "occupation", zipcode = "zipcode")
+
 
 class Movie(Base):
 	__tablename__ = "movies"
@@ -41,9 +52,14 @@ class Rating(Base):
 
 	rating_id = Column(Integer, primary_key = True)
 	user_id = Column(Integer, ForeignKey("users.user_id"))
-	movie_id = Column(Integer)
+	movie_id = Column(Integer, ForeignKey("movies.movie_id"))
 	rating = Column(Integer)
 	timestamp = Column(DATETIME)
+
+	#adds an attribute on ratings objects called user
+	user = relationship("User", backref=backref("ratings", order_by=user_id))
+	#adds an attribute on ratings objects called movie
+	movie = relationship("Movie", backref=backref("ratings", order_by=movie_id))
 
 	def __repr__(self):
 		return"<Rating('%s', '%s', '%s', '%s', '%s')>" % (self.rating_id, self.user_id, self.movie_id, self.rating, self.timestamp)
@@ -55,8 +71,7 @@ def connect():
 	global ENGINE
 	global Session
 
-	ENGINE = create_engine("sqlite:///ratings.db", echo=True)
-	Session = sessionmaker(bind=ENGINE) 
+
 
 	return Session()
 
