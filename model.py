@@ -32,8 +32,6 @@ class User(Base):
 	def __repr__(self):
 		return"<User('%s', '%s', '%s', '%s', '%s')>" % (self.user_id, self.email, self.password, self.age, self.gender, self.occupation, self.zipcode)
 
-def create_user(email, password, age, gender, occupation, zipcode)
-	new_user = User(email = "email", password = "password", gender = "gender", occupation = "occupation", zipcode = "zipcode")
 
 
 class Movie(Base):
@@ -64,20 +62,24 @@ class Rating(Base):
 	def __repr__(self):
 		return"<Rating('%s', '%s', '%s', '%s', '%s')>" % (self.rating_id, self.user_id, self.movie_id, self.rating, self.timestamp)
 
+# End of class declarations
 
-### End class declarations
+def create_db():
+    Base.metadata.create_all(engine)
 
-def connect():
-	global ENGINE
-	global Session
-
-
-
-	return Session()
+def connect(db_uri="sqlite:///ratings.db"):
+    global engine
+    global session
+    engine = create_engine(db_uri, echo=False) 
+    session = scoped_session(sessionmaker(bind=engine,
+                             autocommit = False,
+                             autoflush = False))
 
 def main():
     """In case we need this for something"""
     pass
 
 if __name__ == "__main__":
+    u1 = session.query(User).get(1)
+    m1 = session.query(Movie).get(300)
     main()

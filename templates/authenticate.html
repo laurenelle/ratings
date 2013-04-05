@@ -1,0 +1,23 @@
+
+{% block body %}
+<html>
+    <head> <link rel="stylesheet" href="/static/css/bootstrap.css" type="text/css">
+    	<script src="/path/to/less.js"></script>
+    	<title>New User</title></head>
+    <body>
+<div class="container">
+
+<form method="POST" action="/save_user">
+    <input type="text" name="email"></input>
+    <input type="text" name="password"></input>
+    <input type="text" name="age"></input>
+    <input type="text" name="gender"></input>
+    <input type="text" name="occupation"></input>
+    <input type="text" name="zipcode"></input>
+    <input type="submit">
+</form>
+</div>
+    </body>
+</html>
+
+{% endblock %}
